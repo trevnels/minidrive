@@ -4,6 +4,7 @@ import com.fazecast.jSerialComm.SerialPortEvent;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UpdateRunnable implements Runnable {
@@ -23,12 +24,13 @@ public class UpdateRunnable implements Runnable {
         serialPort.openPort();
         worker = new Thread(this);
         worker.start();
-
+        System.out.println("\u001b[32;1mEnabled!\u001b[0m");
     }
 
     public void stop() {
         running.set(false);
         serialPort.closePort();
+        System.out.println("\u001b[31;1mDisabled!\u001b[0m");
     }
 
     @Override
@@ -36,20 +38,51 @@ public class UpdateRunnable implements Runnable {
         running.set(true);
 
         while(running.get()) {
+//            System.out.println("SENDING");
             controller.poll();
-
+            boolean aButton = false;
+            boolean bButton = false;
+            boolean xButton = false;
+            boolean yButton = false;
+            byte xAxis = 0;
+            byte yAxis = 0;
             for (Component component : controller.getComponents()) {
 //            System.out.println(component.getName());
+
+
+
                 if (component.getName().equals("A")) {
-                    if (component.getPollData() == 1.0) {
-                        byte[] b = "{\"light\": true}\n".getBytes();
-                        serialPort.writeBytes(b, b.length);
-                    } else {
-                        byte[] b = "{\"light\": false}\n".getBytes();
-                        serialPort.writeBytes(b, b.length);
-                    }
+                    aButton = component.getPollData() == 1.0;
                 }
+
+                if (component.getName().equals("B")) {
+                    bButton = component.getPollData() == 1.0;
+                }
+
+                if (component.getName().equals("X")) {
+                    xButton = component.getPollData() == 1.0;
+                }
+
+                if (component.getName().equals("Y")) {
+                    yButton = component.getPollData() == 1.0;
+                }
+
+                if (component.getName().equals("x")) {
+                    xAxis = (byte)Math.floor(component.getPollData() * 127.99);
+                }
+
+                if (component.getName().equals("y")) {
+                    yAxis = (byte)Math.floor(component.getPollData() * 127.99);
+                }
+
             }
+
+            byte buttons = (byte) ((aButton ? 1 : 0) + (bButton ? 2 : 0) + (xButton ? 4 : 0) + (yButton ? 8 : 0));
+            byte[] packet = new byte[]{xAxis, yAxis, buttons, (byte)255};
+
+//            System.out.println(Arrays.toString(packet));
+
+            serialPort.writeBytes(packet, 4);
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
