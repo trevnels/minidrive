@@ -5,10 +5,12 @@ Software for controlling arduino with USB controllers. For use with [miniduino](
 Download and extract the lastest release zip from the releases page.
 
 ## Usage
-Execute `run.sh` or `run.bat`, depending on your OS, from the command line.
-First, select a controller from the list by entering its number, then pressing enter. 
-Then, select the serial port of your Arduino. (On a Mac, this starts with `cu`.)
-You are now in the command line.
+Execute `run.sh` or `run.bat` from the terminal.
+First, select a controller from the list by entering its number and pressing enter. 
+Then select the serial port of your Arduino in a similar fashion (on a Mac, this starts with `cu`.)
+You are now in the command line, where you can enter the following commands.
+
+## Commands
 
 | Command | Description | 
 |---------|-------------|
