@@ -4,7 +4,6 @@ import com.fazecast.jSerialComm.SerialPortEvent;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UpdateRunnable implements Runnable {
@@ -36,7 +35,20 @@ public class UpdateRunnable implements Runnable {
     @Override
     public void run() {
         running.set(true);
-
+        System.out.println("RUNNING");
+        serialPort.addDataListener(new SerialPortDataListener() {
+            @Override
+            public int getListeningEvents() { return SerialPort.LISTENING_EVENT_DATA_AVAILABLE; }
+            @Override
+            public void serialEvent(SerialPortEvent event)
+            {
+                if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE)
+                    return;
+                byte[] newData = new byte[serialPort.bytesAvailable()];
+                int numRead = serialPort.readBytes(newData, newData.length);
+//                System.out.println(new String(newData));
+            }
+        });
         while(running.get()) {
 //            System.out.println("SENDING");
             controller.poll();
@@ -44,8 +56,14 @@ public class UpdateRunnable implements Runnable {
             boolean bButton = false;
             boolean xButton = false;
             boolean yButton = false;
+
+            double x = 0.0;
+            double y = 0.0;
+
             byte xAxis = 0;
             byte yAxis = 0;
+
+//            System.out.println(controller.getComponent(Component.Identifier.Axis.X).getPollData());
             for (Component component : controller.getComponents()) {
 //            System.out.println(component.getName());
 
@@ -68,17 +86,31 @@ public class UpdateRunnable implements Runnable {
                 }
 
                 if (component.getName().equals("x")) {
-                    xAxis = (byte)Math.floor(component.getPollData() * 127.99);
+//                    xAxis = (byte)Math.floor(component.getPollData() * 127.99);
+                    x = component.getPollData();
                 }
 
                 if (component.getName().equals("y")) {
-                    yAxis = (byte)Math.floor(component.getPollData() * 127.99);
+                    y = component.getPollData();
                 }
 
             }
 
             byte buttons = (byte) ((aButton ? 1 : 0) + (bButton ? 2 : 0) + (xButton ? 4 : 0) + (yButton ? 8 : 0));
-            byte[] packet = new byte[]{xAxis, yAxis, buttons, (byte)255};
+
+            double left = y - x;
+            double right = y + x;
+
+            if(left > 1) left = 1;
+            if(left < -1) left = -1;
+            if(right > 1) right = 1;
+            if(right < -1) right = -1;
+
+            byte leftVelocity = (byte) Math.floor(left * 127.99);
+            byte rightVelocity = (byte) Math.floor(right * 127.99);
+//            System.out.println("L="+leftVelocity);
+
+            byte[] packet = new byte[]{leftVelocity, rightVelocity, buttons, (byte)255};
 
 //            System.out.println(Arrays.toString(packet));
 
