@@ -40,15 +40,17 @@ public class UpdateRunnable implements Runnable {
         while(running.get()) {
 //            System.out.println("SENDING");
             controller.poll();
-            boolean aButton = false;
-            boolean bButton = false;
-            boolean xButton = false;
-            boolean yButton = false;
-            byte xAxis = 0;
-            byte yAxis = 0;
+
+//            System.out.println(controller.getComponent(Component.Identifier.Axis.X).getPollData());
+//            System.out.println(controller.getComponent(Component.Identifier.Axis.Y).getPollData());
+            boolean aButton = controller.getComponent(Component.Identifier.Button.A).getPollData() == 1.0f;
+            boolean bButton = controller.getComponent(Component.Identifier.Button.B).getPollData() == 1.0f;
+            boolean xButton = controller.getComponent(Component.Identifier.Button.X).getPollData() == 1.0f;
+            boolean yButton = controller.getComponent(Component.Identifier.Button.Y).getPollData() == 1.0f;
+
             for (Component component : controller.getComponents()) {
 //            System.out.println(component.getName());
-
+//                if(component.getPollData() != 0.0f) System.out.println(component.getName());
 
 
                 if (component.getName().equals("A")) {
@@ -68,6 +70,7 @@ public class UpdateRunnable implements Runnable {
                 }
 
                 if (component.getName().equals("x")) {
+//                    System.out.println(component.getPollData());
                     xAxis = (byte)Math.floor(component.getPollData() * 127.99);
                 }
 

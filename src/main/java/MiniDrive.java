@@ -26,10 +26,9 @@ public class MiniDrive {
         SerialPort p = comms[Integer.parseInt(s.nextLine())];
         p.setBaudRate(19200);
 
-
         UpdateRunnable updater = new UpdateRunnable(selected, p);
         while(true) {
-            System.out.print("> ");
+            System.out.print("cmd > ");
             String cmd = s.nextLine().trim();
             if(cmd.equals("q")){
                 updater.stop();
