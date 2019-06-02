@@ -56,42 +56,13 @@ public class UpdateRunnable implements Runnable {
 
 //            System.out.println(controller.getComponent(Component.Identifier.Axis.X).getPollData());
 //            System.out.println(controller.getComponent(Component.Identifier.Axis.Y).getPollData());
+            float x = controller.getComponent(Component.Identifier.Axis.X).getPollData();
+            float y = controller.getComponent(Component.Identifier.Axis.Y).getPollData();
+
             boolean aButton = controller.getComponent(Component.Identifier.Button.A).getPollData() == 1.0f;
             boolean bButton = controller.getComponent(Component.Identifier.Button.B).getPollData() == 1.0f;
             boolean xButton = controller.getComponent(Component.Identifier.Button.X).getPollData() == 1.0f;
             boolean yButton = controller.getComponent(Component.Identifier.Button.Y).getPollData() == 1.0f;
-
-            for (Component component : controller.getComponents()) {
-//            System.out.println(component.getName());
-
-
-
-                if (component.getName().equals("A")) {
-                    aButton = component.getPollData() == 1.0;
-                }
-
-                if (component.getName().equals("B")) {
-                    bButton = component.getPollData() == 1.0;
-                }
-
-                if (component.getName().equals("X")) {
-                    xButton = component.getPollData() == 1.0;
-                }
-
-                if (component.getName().equals("Y")) {
-                    yButton = component.getPollData() == 1.0;
-                }
-
-                if (component.getName().equals("x")) {
-//                    xAxis = (byte)Math.floor(component.getPollData() * 127.99);
-                    x = component.getPollData();
-                }
-
-                if (component.getName().equals("y")) {
-                    y = component.getPollData();
-                }
-
-            }
 
             byte buttons = (byte) ((aButton ? 1 : 0) + (bButton ? 2 : 0) + (xButton ? 4 : 0) + (yButton ? 8 : 0));
 
