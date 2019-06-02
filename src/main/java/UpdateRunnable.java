@@ -4,6 +4,7 @@ import com.fazecast.jSerialComm.SerialPortEvent;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UpdateRunnable implements Runnable {
@@ -52,18 +53,14 @@ public class UpdateRunnable implements Runnable {
         while(running.get()) {
 //            System.out.println("SENDING");
             controller.poll();
-            boolean aButton = false;
-            boolean bButton = false;
-            boolean xButton = false;
-            boolean yButton = false;
-
-            double x = 0.0;
-            double y = 0.0;
-
-            byte xAxis = 0;
-            byte yAxis = 0;
 
 //            System.out.println(controller.getComponent(Component.Identifier.Axis.X).getPollData());
+//            System.out.println(controller.getComponent(Component.Identifier.Axis.Y).getPollData());
+            boolean aButton = controller.getComponent(Component.Identifier.Button.A).getPollData() == 1.0f;
+            boolean bButton = controller.getComponent(Component.Identifier.Button.B).getPollData() == 1.0f;
+            boolean xButton = controller.getComponent(Component.Identifier.Button.X).getPollData() == 1.0f;
+            boolean yButton = controller.getComponent(Component.Identifier.Button.Y).getPollData() == 1.0f;
+
             for (Component component : controller.getComponents()) {
 //            System.out.println(component.getName());
 
